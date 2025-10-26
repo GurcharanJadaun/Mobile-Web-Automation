@@ -1,0 +1,7 @@
+<extentreports>
+  <configuration>
+    <reportName>CouchBase Test Report</reportName>
+    <documentTitle>CouchBase Test Report</documentTitle>
+    <theme>standard</theme>
+  </configuration>
+</extentreports>

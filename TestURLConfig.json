@@ -1,0 +1,12 @@
+{
+	"Product": {
+		"Base Url": "https://www.couchbase.com",
+		"UserName": "",
+		"Password": ""
+	},
+	"Staging": {
+		"Base Url": "https://staging.couchbase.com",
+		"UserName": "cbmigrationstg",
+		"Password": "83d820ec"
+	}
+}

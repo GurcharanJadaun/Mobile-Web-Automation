@@ -1,0 +1,58 @@
+[{
+	"ConfigName" : "MacParallelTestRunner",
+	"RunConfig": {
+		"TargetOperatingSystem": "MAC",
+		"ParallelBrowserExecution" : "true",
+		"TargetBrowsers": [
+			{
+				"BrowserName": "Chrome",
+				"ParallelTestExecution": "true",
+				"NumberOfTests":"5",
+				"HeadlessBrowser" : "true",
+				"RetryFailedTestCases" : "true"
+			},
+			{
+				"BrowserName": "Firefox",
+				"ParallelTestExecution": "true",
+				"NumberOfTests":"5",
+				"HeadlessBrowser" : "true",
+				"RetryFailedTestCases" : "true"
+			},
+			{
+				"BrowserName": "Safari",
+				"ParallelTestExecution": "true",
+				"NumberOfTests":"5",
+				"HeadlessBrowser" : "true",
+				"RetryFailedTestCases" : "false"
+			}
+		]
+	}
+},
+{
+	"ConfigName" : "TestRunner",
+	"RunConfig": {
+		"ParallelBrowserExecution": "true",
+		"TargetOperatingSystem": "MAC",
+		"TargetBrowsers": [
+			{
+				"BrowserName": "Chrome",
+				"ParallelTestExecution": "true",
+				"NumberOfTests":"5",
+				"HeadlessBrowser" : "false"
+			}
+		]
+	}
+},
+{
+	"ConfigName" : "WindowsTestRunner",
+	"RunConfig": {
+		"ParallelBrowserExecution": "true",
+		"TargetOperatingSystem": "Windows",
+		"TargetBrowsers": [
+			{
+				"BrowserName": "Chrome"
+			}
+		]
+	}
+}
+]
