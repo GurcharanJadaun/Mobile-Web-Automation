@@ -176,6 +176,8 @@ public class RunTests {
 					
 					ex = new ExecuteStep(deviceConfig);
 					this.runTestCase(retryTestCase, ex);
+					
+					report[browserDetails.getBrowserSerialNumber()].fireRemoveTestCase(testSuite, testCase);
 				}
 			
 				this.cleanUp(ex);

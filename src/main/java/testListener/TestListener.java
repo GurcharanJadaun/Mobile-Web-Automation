@@ -14,6 +14,8 @@ public interface TestListener {
 	public void addTestSuite(TestSuite suiteNode);
 
 	public void addTestCase(TestCase testCase,TestSuite suiteNode);
+	
+	public void removeTestCase(TestSuite suiteNode, TestCase testCase);
 
 	public void addTestStep (TestStep testStep, TestCase testCase);
 

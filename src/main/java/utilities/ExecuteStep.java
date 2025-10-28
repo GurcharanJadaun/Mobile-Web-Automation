@@ -22,12 +22,12 @@ public class ExecuteStep {
 	public ExecuteStep(BrowserConfig browserConfig) {
 		this.browserConfig = browserConfig;
 		keyword = new KeywordDictionary(browserConfig);
+		keywordDictionaryClass = keyword.getClass();
 		screenshot = null;
 		this.flush();
 	}
 
 	public void flush() {
-		keywordDictionaryClass = keyword.getClass();
 		result = TestStatus.PASSED;
 		reason = "";
 	}

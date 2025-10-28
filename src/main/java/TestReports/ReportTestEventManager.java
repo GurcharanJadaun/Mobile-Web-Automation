@@ -44,6 +44,12 @@ public class ReportTestEventManager {
         }
 	}
 	
+	public void fireRemoveTestCase(TestSuite suite, TestCase testCase) {
+		for(TestListener listener: listeners) {
+			listener.removeTestCase(suite, testCase);
+		}
+	}
+	
 	public void fireFinishTest(Optional<String> browserName) {
 		for (TestListener listener : listeners) {
             listener.finishTest(browserName);
