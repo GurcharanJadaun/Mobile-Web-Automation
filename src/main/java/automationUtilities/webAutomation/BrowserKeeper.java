@@ -1,4 +1,4 @@
-package utilities;
+package automationUtilities.webAutomation;
 
 import java.util.Arrays;
 

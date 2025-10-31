@@ -10,11 +10,12 @@ import testManager.TestCase;
 import testManager.TestStatus;
 import testManager.TestStep;
 import testManager.TestSuite;
+import utilities.LocatorInfo;
 
 public abstract class TestCaseCompiler {
 
 	public HashMap<String, String> functionDetails;
-	public HashMap<String, String> locators;
+	public HashMap<String, LocatorInfo> locators;
 
 	public void generateCompilationReport(TestSuite suite) {
 
@@ -141,7 +142,11 @@ public abstract class TestCaseCompiler {
 		while (it.hasNext()) {
 			TestStep step = it.next();
 			String loc = step.getLocator();
-			String value = locators.get(loc);
+			String value = null;
+			
+			if(locators.get(loc).getLocatorValue().length()>0) {
+			 value = locators.get(loc).getLocatorTypeAndValue(" : ");
+			}
 			step.insertLocator(Optional.ofNullable(value));
 		}
 	}

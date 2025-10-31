@@ -1,12 +1,14 @@
-package utilities;
+package automationUtilities.webAutomation;
 
 import java.text.Normalizer;
 import java.util.Optional;
 
 import org.json.JSONObject;
+import org.openqa.selenium.By;
 
 import TestExceptions.SoftAssert;
 import deviceConfiguration.BrowserConfig;
+import utilities.LocatorInfo;
 
 public class KeywordDictionary  {
 	BrowserKeeper browser;
@@ -58,11 +60,13 @@ public class KeywordDictionary  {
 	}
 	
 	public void click(String locatorData) {
+		locatorData = this.getLocatorFromString(locatorData);
 		browser.waitForPresenceOfElement(locatorData);
 		browser.clickWebElement(locatorData);
 	}
 	
 	public void triggerLazyLoadAndClick(String locatorData) throws InterruptedException {
+		locatorData = this.getLocatorFromString(locatorData);
 		browser.movePageToTackleLazyLoad();
 		browser.waitForPresenceOfElement(locatorData);
 		browser.checkVisibilityOfElement(locatorData);
@@ -76,6 +80,7 @@ public class KeywordDictionary  {
 	}
 	
 	public void enterTextInTextField(String locatorData, String text)throws InterruptedException  {
+		locatorData = this.getLocatorFromString(locatorData);
 		browser.waitForPresenceOfElement(locatorData);
 		browser.scrollIntoView(locatorData);
 		browser.checkVisibilityOfElement(locatorData);
@@ -88,12 +93,14 @@ public class KeywordDictionary  {
 	
 	
 	public void selectValueFromDropDown(String locatorData, String text) {
+		locatorData = this.getLocatorFromString(locatorData);
 		browser.waitForPresenceOfElement(locatorData);
 		browser.scrollIntoView(locatorData);
 		browser.selectValueFromDropDown(locatorData, text);
 	}
 	
 	public void selectIndexFromDropDown(String locatorData, String index) {
+		locatorData = this.getLocatorFromString(locatorData);
 		int indexToBeSelected = Integer.parseInt(index);
 		browser.waitForPresenceOfElement(locatorData);
 		browser.scrollIntoView(locatorData);
@@ -101,12 +108,14 @@ public class KeywordDictionary  {
 	}
 	
 	public void waitForPresenceAndClick(String locatorData) {
+		locatorData = this.getLocatorFromString(locatorData);
 		browser.waitForPresenceOfElement(locatorData);
 		browser.scrollIntoView(locatorData);
 		browser.clickWebElement(locatorData);
 	}
 	
 	public void elementMustBeVisible(String locatorData) throws Exception{
+		locatorData = this.getLocatorFromString(locatorData);
 		browser.waitForPresenceOfElement(locatorData);
 		browser.scrollIntoView(locatorData);
 		boolean result = browser.checkVisibilityOfElement(locatorData);
@@ -116,6 +125,7 @@ public class KeywordDictionary  {
 	}
 	
 	public void elementShouldBeVisible(String locatorData) throws SoftAssert{
+		locatorData = this.getLocatorFromString(locatorData);
 		browser.waitForPresenceOfElement(locatorData);
 		browser.scrollIntoView(locatorData);
 		boolean result = browser.checkVisibilityOfElement(locatorData);
@@ -125,6 +135,7 @@ public class KeywordDictionary  {
 	}
 	
 	public void textBoxMustHaveValue(String locatorData, String expectedData) throws Exception{
+		locatorData = this.getLocatorFromString(locatorData);
 		browser.waitForPresenceOfElement(locatorData);
 		browser.scrollIntoView(locatorData);
 		String actualData = browser.getTextFromTextBox(locatorData);
@@ -139,6 +150,7 @@ public class KeywordDictionary  {
 	}
 	
 	public void textBoxShouldHaveValue(String locatorData, String expectedData) throws SoftAssert{
+		locatorData = this.getLocatorFromString(locatorData);
 		browser.waitForPresenceOfElement(locatorData);
 		browser.scrollIntoView(locatorData);
 		
@@ -153,6 +165,7 @@ public class KeywordDictionary  {
 	}
 	
 	public void elementMustHaveText(String locatorData, String expectedData) throws Exception {
+		locatorData = this.getLocatorFromString(locatorData);
 		browser.waitForPresenceOfElement(locatorData);
 		browser.scrollIntoView(locatorData);
 		
@@ -166,21 +179,24 @@ public class KeywordDictionary  {
 		}
 	}
 	
-	public void isButtonEnabled(String locator) throws Exception {
-		boolean result = browser.isButtonEnabled(locator);
+	public void isButtonEnabled(String locatorData) throws Exception {
+		locatorData = this.getLocatorFromString(locatorData);
+		boolean result = browser.isButtonEnabled(locatorData);
 		if(!result) {
 			throw new Exception("<< Button is not enabled >>");
 		}
 	}
 	
-	public void isButtonDisabled(String locator) throws Exception {
-		boolean result = browser.isButtonDisabled(locator);
+	public void isButtonDisabled(String locatorData) throws Exception {
+		locatorData = this.getLocatorFromString(locatorData);
+		boolean result = browser.isButtonDisabled(locatorData);
 		if(!result) {
 			throw new Exception("<< Button is not disabled >>");
 		}
 	}
 	
 	public void elementShouldHaveText(String locatorData, String expectedData) throws SoftAssert {
+		locatorData = this.getLocatorFromString(locatorData);
 		browser.waitForPresenceOfElement(locatorData);
 		browser.scrollIntoView(locatorData);
 		
@@ -194,8 +210,9 @@ public class KeywordDictionary  {
 		}
 	}
 	
-	public void elementShouldNotBePresent(String locator) throws SoftAssert {
-		boolean result = browser.isElementAbsentInDom(locator);
+	public void elementShouldNotBePresent(String locatorData) throws SoftAssert {
+		locatorData = this.getLocatorFromString(locatorData);
+		boolean result = browser.isElementAbsentInDom(locatorData);
 		if(!result) {
 			throw new SoftAssert("<< Element is Present in DOM >>");
 		}
@@ -205,16 +222,18 @@ public class KeywordDictionary  {
 		browser.pressKeyboardKey(keyName);
 	}
 	
-	public void verifyWarningIsDisplayedForTheField(String locator) throws Exception {
-		String value = browser.getClassOfTheElement(locator);
+	public void verifyWarningIsDisplayedForTheField(String locatorData) throws Exception {
+		locatorData = this.getLocatorFromString(locatorData);
+		String value = browser.getClassOfTheElement(locatorData);
 		boolean result = value.contains("customInvalid") || value.contains("mktoInvalid");
 		if(!result) {
 			throw new Exception("<< No Warning is displayed for the field >>");
 		}
 	}
 	
-	public void verifyNoWarningIsDisplayedForTheField(String locator) throws Exception {
-		String value = browser.getClassOfTheElement(locator);
+	public void verifyNoWarningIsDisplayedForTheField(String locatorData) throws Exception {
+		locatorData = this.getLocatorFromString(locatorData);
+		String value = browser.getClassOfTheElement(locatorData);
 		boolean result = (value.contains("customInvalid") || value.contains("mktoInvalid"));
 		if(result) {
 			throw new Exception("<< Warning is displayed for the field >>");
@@ -247,5 +266,14 @@ public class KeywordDictionary  {
 			 }
 		 return text;
 	}
+	 
+	  String getLocatorFromString(String loc) {
+			String locator = "";
+			
+			LocatorInfo locatorInfo = new LocatorInfo(loc , " : ");
+			locator = locatorInfo.getLocatorValue();
+			
+			return locator;
+		}
 	
 }
