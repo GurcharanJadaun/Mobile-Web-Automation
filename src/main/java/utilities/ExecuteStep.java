@@ -2,34 +2,46 @@ package utilities;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Optional;
-
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.model.Media;
 
+import automationUtilities.webAutomation.KeywordDictionary;
+import automationUtilities.mobileAutomation.MobileKeywordDictionary;
+import deviceConfiguration.AppConfig;
 import deviceConfiguration.BrowserConfig;
 import testManager.TestStatus;
 
 public class ExecuteStep {
-	KeywordDictionary keyword;
 	Class<?> keywordDictionaryClass;
+	KeywordSet keywordSet;
 	public TestStatus result;
 	public String reason;
 	private MediaEntityBuilder screenshotBuilder;
 	public Media screenshot;
-	public BrowserConfig browserConfig;
+	BrowserConfig browserConfig;
+	AppConfig appConfig;
 
 	public ExecuteStep(BrowserConfig browserConfig) {
 		this.browserConfig = browserConfig;
-		keyword = new KeywordDictionary(browserConfig);
-		keywordDictionaryClass = keyword.getClass();
-		screenshot = null;
+		KeywordDictionary dictionary = new KeywordDictionary(browserConfig);
+		keywordDictionaryClass = dictionary.getClass();
+		keywordSet = new KeywordSet(dictionary);
+		this.flush();
+	}
+	
+	public ExecuteStep(AppConfig appConfig) {
+		this.appConfig = appConfig;
+		MobileKeywordDictionary dictionary = new MobileKeywordDictionary(appConfig);
+		keywordDictionaryClass = dictionary.getClass();
+		keywordSet = new KeywordSet(dictionary);
 		this.flush();
 	}
 
 	public void flush() {
 		result = TestStatus.PASSED;
 		reason = "";
+		screenshot = null;
+		
 	}
 
 	public void executeStep(String methodName, String locator, String testData) {
@@ -37,7 +49,7 @@ public class ExecuteStep {
 		try {
 			method = keywordDictionaryClass.getMethod(methodName, String.class, String.class);
 			try {
-				method.invoke(keyword, locator, testData);
+				method.invoke(keywordSet.getDictionary(keywordDictionaryClass), locator, testData);
 			} catch (IllegalAccessException | IllegalArgumentException e) {
 				// add logs here for failing to execute located method from Keyword class.
 				this.setResultForException(e);
@@ -67,7 +79,7 @@ public class ExecuteStep {
 		try {
 			method = keywordDictionaryClass.getMethod(methodName, String.class);
 			try {
-				method.invoke(keyword, oneParameter);
+				method.invoke(keywordSet.getDictionary(keywordDictionaryClass), oneParameter);
 			} catch (IllegalAccessException | IllegalArgumentException e) {
 				// add logs here for failing to execute located method from Keyword class.
 				this.setResultForException(e);
@@ -90,7 +102,7 @@ public class ExecuteStep {
 		try {
 			method = keywordDictionaryClass.getMethod(methodName);
 			try {
-				method.invoke(keyword);
+				method.invoke(keywordSet.getDictionary(keywordDictionaryClass));
 			} catch (IllegalAccessException | IllegalArgumentException e) {
 				// add logs here for failing to execute located method from Keyword class.
 				this.setResultForException(e);
@@ -107,14 +119,35 @@ public class ExecuteStep {
 			this.setResultForException(e);
 		}
 	}
+	
+	public BrowserConfig getBrowserConfig() {
+		return this.browserConfig;
+	}
+	
+	public AppConfig getAppConfig() {
+		return this.appConfig;
+		}
 
 	@SuppressWarnings("static-access")
 	void takeScreenshot() {
 		try {
-			byte[] screenshotBytes = this.keyword.takeScreenshot();
-			this.screenshot = this.screenshotBuilder
-					.createScreenCaptureFromBase64String(java.util.Base64.getEncoder().encodeToString(screenshotBytes))
-					.build();
+			byte[] screenshotBytes;
+			
+			if(keywordDictionaryClass == KeywordDictionary.class) {
+				KeywordDictionary obj = (KeywordDictionary) this.keywordSet.getDictionary(keywordDictionaryClass);
+				screenshotBytes = obj.takeScreenshot();
+					this.screenshot = this.screenshotBuilder
+							.createScreenCaptureFromBase64String(java.util.Base64.getEncoder().encodeToString(screenshotBytes))
+							.build();
+			}else if(keywordDictionaryClass == MobileKeywordDictionary.class) {
+				MobileKeywordDictionary obj = (MobileKeywordDictionary) this.keywordSet.getDictionary(keywordDictionaryClass);
+				screenshotBytes = obj.takeScreenshot();
+					this.screenshot = this.screenshotBuilder
+							.createScreenCaptureFromBase64String(java.util.Base64.getEncoder().encodeToString(screenshotBytes))
+							.build();
+			}
+			
+			
 		} catch (Exception ex) {
 			System.out.print("<<<<<<< Screenshot Not Taken >>>>>");
 			this.screenshot = null;
@@ -136,5 +169,6 @@ public class ExecuteStep {
 				result = TestStatus.STOP_EXECUTION;
 			}
 		}
+		ex.printStackTrace();
 	}
 }

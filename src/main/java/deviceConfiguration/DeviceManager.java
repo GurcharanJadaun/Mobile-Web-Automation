@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import FileManager.JsonFileManager;
 
 public class DeviceManager {
+	List<AppConfig> apps;
 	List<BrowserConfig> browsers;
 	String operatingSystem, deviceConfigName;
 	boolean runTestsOnBrowsersInParallel, isConfigValid;
@@ -19,6 +20,7 @@ public class DeviceManager {
 		this.deviceConfigName = deviceConfigName;
 		isConfigValid = true;
 		browsers = new ArrayList<BrowserConfig>();
+		apps = new ArrayList<AppConfig>();
 	}
 	
 	/**
@@ -40,6 +42,13 @@ public class DeviceManager {
 	 */
 	public List<BrowserConfig> getBrowserList() {
 		return this.browsers;
+	}
+	
+	/**
+	 * returns List<AppConfig>. The list has the browser configuration details.
+	 */
+	public List<AppConfig> getAppList() {
+		return this.apps;
 	}
 	
 	/**
@@ -69,6 +78,28 @@ public class DeviceManager {
 		
 		return shortListedConfig;
 
+	}
+	
+	public void setupAppsForDevice(String configName) {
+		JsonNode shortListedConfig = this.getTestRunnerConfig(configName);
+		if(shortListedConfig != null) {
+			if (shortListedConfig.hasNonNull("TargetOperatingSystem")) {
+		        this.operatingSystem = shortListedConfig.get("TargetOperatingSystem").asText();
+		    }
+			
+			 int i = 0;
+			 Iterator<JsonNode> it = shortListedConfig.get("TargetAppDetails").elements();
+			 while(it.hasNext()) {
+				 JsonNode item = it.next();
+				 apps.add(new AppConfig(item, i));
+				 i++;
+				 
+			 }
+			
+		}else {
+			System.out.println("Config Name '" + configName+"' not available in DeviceConfig.JSON");
+		}
+	
 	}
 	
 	/**
@@ -104,6 +135,14 @@ public class DeviceManager {
 		
 		
 	}
+	
+	public void setupAppsForDevice(String configName,JSONObject testEnvConfig) {
+		this.setupAppsForDevice(configName);
+		this.apps.forEach(app -> {
+			app.setTestUrlDetails(testEnvConfig);
+		});
+	}
+	
 	/**
 	 * Assigns Browser Details to the list of BrowserConfig from the JSON Array filtered by "ConfigName" parameter 
 	 * & setup test environment details for each browser

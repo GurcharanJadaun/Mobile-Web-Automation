@@ -1,58 +1,103 @@
-[{
-	"ConfigName" : "MacParallelTestRunner",
-	"RunConfig": {
-		"TargetOperatingSystem": "MAC",
-		"ParallelBrowserExecution" : "true",
-		"TargetBrowsers": [
-			{
-				"BrowserName": "Chrome",
-				"ParallelTestExecution": "true",
-				"NumberOfTests":"5",
-				"HeadlessBrowser" : "true",
-				"RetryFailedTestCases" : "true"
-			},
-			{
-				"BrowserName": "Firefox",
-				"ParallelTestExecution": "true",
-				"NumberOfTests":"5",
-				"HeadlessBrowser" : "true",
-				"RetryFailedTestCases" : "true"
-			},
-			{
-				"BrowserName": "Safari",
-				"ParallelTestExecution": "true",
-				"NumberOfTests":"5",
-				"HeadlessBrowser" : "true",
-				"RetryFailedTestCases" : "false"
-			}
-		]
+[
+	{
+		"ConfigName": "MacParallelTestRunner",
+		"RunConfig": {
+			"TargetOperatingSystem": "MAC",
+			"ParallelBrowserExecution": "true",
+			"TargetBrowsers": [
+				{
+					"BrowserName": "Chrome",
+					"ParallelTestExecution": "true",
+					"NumberOfTests": "5",
+					"HeadlessBrowser": "true",
+					"RetryFailedTestCases": "true"
+				},
+				{
+					"BrowserName": "Firefox",
+					"ParallelTestExecution": "true",
+					"NumberOfTests": "5",
+					"HeadlessBrowser": "true",
+					"RetryFailedTestCases": "true"
+				},
+				{
+					"BrowserName": "Safari",
+					"ParallelTestExecution": "true",
+					"NumberOfTests": "5",
+					"HeadlessBrowser": "true",
+					"RetryFailedTestCases": "false"
+				}
+			]
+		}
+	},
+	{
+		"ConfigName": "TestRunner",
+		"RunConfig": {
+			"ParallelBrowserExecution": "true",
+			"TargetOperatingSystem": "MAC",
+			"TargetBrowsers": [
+				{
+					"BrowserName": "Chrome",
+					"ParallelTestExecution": "true",
+					"NumberOfTests": "5",
+					"HeadlessBrowser": "false"
+					
+				}
+			]
+		}
+	},
+	{
+		"ConfigName": "WindowsTestRunner",
+		"RunConfig": {
+			"ParallelBrowserExecution": "true",
+			"TargetOperatingSystem": "Windows",
+			"TargetBrowsers": [
+				{
+					"BrowserName": "Chrome"
+				}
+			]
+		}
+	},
+	{
+		"ConfigName": "AndroidEdgeRunner",
+		"RunConfig": {
+			"TargetAppDetails": [
+				{
+					"TargetOperatingSystem": "Android",
+					"AppName" : "Chrome",
+					"PackageName" : "com.android.chrome",
+					"AppiumServerUrl" : "http://127.0.0.1:4723",
+					"ResetAppData" : "false",
+					"RetryFailedTestCases": "false"
+				}
+			]
+		}
+	},
+	{
+		"ConfigName": "AndroidTestRunner",
+		"RunConfig": {
+			"TargetAppDetails": [
+				{
+					"TargetOperatingSystem": "Android",
+					"AppName" : "Chrome",
+					"PackageName" : "com.android.chrome",
+					"AppiumServerUrl" : "http://127.0.0.1:4723",
+					"ResetAppData" : "false"
+				},
+				{
+					"TargetOperatingSystem": "Android",
+					"AppName" : "Firefox",
+					"PackageName" : "org.mozilla.firefox",
+					"AppiumServerUrl" : "http://127.0.0.1:4723",
+					"ResetAppData" : "false"
+				},
+				{
+					"TargetOperatingSystem": "Android",
+					"AppName" : "Edge",
+					"PackageName" : "com.microsoft.emmx",
+					"AppiumServerUrl" : "http://127.0.0.1:4723",
+					"ResetAppData" : "false"
+				}
+			]
+		}
 	}
-},
-{
-	"ConfigName" : "TestRunner",
-	"RunConfig": {
-		"ParallelBrowserExecution": "true",
-		"TargetOperatingSystem": "MAC",
-		"TargetBrowsers": [
-			{
-				"BrowserName": "Chrome",
-				"ParallelTestExecution": "true",
-				"NumberOfTests":"5",
-				"HeadlessBrowser" : "false"
-			}
-		]
-	}
-},
-{
-	"ConfigName" : "WindowsTestRunner",
-	"RunConfig": {
-		"ParallelBrowserExecution": "true",
-		"TargetOperatingSystem": "Windows",
-		"TargetBrowsers": [
-			{
-				"BrowserName": "Chrome"
-			}
-		]
-	}
-}
 ]

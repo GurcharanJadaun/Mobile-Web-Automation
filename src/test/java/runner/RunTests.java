@@ -195,10 +195,10 @@ public class RunTests {
 		Iterator<TestStep> it = testCase.getSteps().iterator();
 		while (it.hasNext()) {
 			TestStep ts = it.next();
-			report[ex.browserConfig.getBrowserSerialNumber()].fireAddTestStepEvent(ts, testCase);
+			report[ex.getBrowserConfig().getBrowserSerialNumber()].fireAddTestStepEvent(ts, testCase);
 			if (testCase.getTestCaseResult().isFailed()) {
 				ts.setFailureReason(">> Skipped because of error in " + testCase.getTestCaseId() + " <<");
-				this.skipStep(ts, ex.browserConfig);
+				this.skipStep(ts, ex.getBrowserConfig());
 			} else {
 				runTestStep(ts, ex);
 
@@ -214,7 +214,7 @@ public class RunTests {
 		Instant end = Instant.now();
 		Duration timeElapsed = Duration.between(start, end);
 
-		System.out.println("Executing : " +ex.browserConfig.getBrowserName()+"\t"+ testCase.getTestCaseId() + "\t" + testCase.getTestCaseResult() + "\t"
+		System.out.println("Executing : " +ex.getBrowserConfig().getBrowserName()+"\t"+ testCase.getTestCaseId() + "\t" + testCase.getTestCaseResult() + "\t"
 				+ timeElapsed.toSeconds() + "\t" + testCase.getTestCaseReason());
 	}
 
@@ -272,7 +272,7 @@ public class RunTests {
 		testStep.setResult(ex.result, ex.reason);
 		testStep.attachScreenshot(ex.screenshot);
 
-		report[ex.browserConfig.getBrowserSerialNumber()].fireSetTestStepStatus(testStep);
+		report[ex.getBrowserConfig().getBrowserSerialNumber()].fireSetTestStepStatus(testStep);
 	}
 	
 }

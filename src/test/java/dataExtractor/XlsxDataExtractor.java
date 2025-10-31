@@ -22,6 +22,7 @@ import testManager.CreateTestSuite;
 import testManager.TestCase;
 import testManager.TestStep;
 import testManager.TestSuite;
+import utilities.LocatorInfo;
 
 public class XlsxDataExtractor extends TestCaseCompiler implements CreateTestSuite {
 
@@ -226,13 +227,13 @@ public class XlsxDataExtractor extends TestCaseCompiler implements CreateTestSui
 	@Override
 	public void loadLocatorMap(String dir) {
 		XlsxFileManager fileManager = new XlsxFileManager();
-		this.locators = new HashMap<String, String>();
+		this.locators = new HashMap<String, LocatorInfo>();
 
 		List<Sheet> listOfSheets = fileManager.getFirstExcelSheetFromAllFiles(dir);
 		Iterator<Sheet> it = listOfSheets.iterator();
 		while (it.hasNext()) {
 			Sheet sheet = it.next();
-			HashMap<String, String> tmp = new HashMap<String, String>();
+			HashMap<String, LocatorInfo> tmp = new HashMap<String, LocatorInfo>();
 
 			JSONArray items = fileManager.excelSheetToJsonArray(sheet);
 			
@@ -240,8 +241,14 @@ public class XlsxDataExtractor extends TestCaseCompiler implements CreateTestSui
 				JSONObject row = items.getJSONObject(i);
 				String locatorName = row.get("Locator Name").toString();
 				String locatorValue = row.get("Locator Value").toString();
-
-				tmp.put(locatorName, locatorValue);
+				String locatorType = row.getString("Locator Type").toString();
+				
+				JSONObject loc = new JSONObject();
+				loc.put("locatorName", locatorName);
+				loc.put("locatorValue", locatorValue);
+				loc.put("locatorType", locatorType);
+				
+				tmp.put(locatorName, new LocatorInfo(loc));
 			}
 
 			this.locators.putAll(tmp);
