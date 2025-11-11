@@ -1,0 +1,74 @@
+[
+	{
+		"ConfigName": "AndroidEdgeRunner",
+		"RunConfig": {
+			"TargetDeviceDetails": [
+				{
+					"AppiumServerUrl": "http://127.0.0.1:4723",
+					"TargetOperatingSystem": "Android",
+					"TargetAppDetails": [
+						{
+							"AppName": "Chrome",
+							"PackageName": "com.android.chrome",
+							"ResetAppData": "false",
+							"RetryFailedTestCases": "false"
+						}
+					]
+				}
+			]
+		}
+	},
+	{
+		"ConfigName": "IosSafariRunner",
+		"RunConfig": {
+			"TargetDeviceDetails": [
+				{
+					"udid": "",
+					"platformVersion": "",
+					"deviceName": "",
+					"AppiumServerUrl": "http://127.0.0.1:4723",
+					"TargetOperatingSystem": "IOS",
+					"RetryFailedTestCases": "false",
+					"TargetAppDetails": [
+						{
+							"AppName": "Safari",
+							"PackageName": "com.android.chrome",
+							"ResetAppData": "false"
+						}
+					]
+				}
+			]
+		}
+	},
+	{
+		"ConfigName": "AndroidTestRunner",
+		"RunConfig": {
+			"TargetDeviceDetails": [
+				{
+					"AppiumServerUrl": "http://127.0.0.1:4723",
+					"TargetOperatingSystem": "Android",
+					"TargetAppDetails": [
+						{
+							"AppName": "Chrome",
+							"PackageName": "com.android.chrome",
+							"ResetAppData": "false",
+							"RetryFailedTestCases": "false"
+						},
+						{
+							"AppName": "Firefox",
+							"PackageName": "org.mozilla.firefox",
+							"ResetAppData": "false",
+							"RetryFailedTestCases": "false"
+						},
+						{
+							"AppName": "Edge",
+							"PackageName": "com.microsoft.emmx",
+							"ResetAppData": "false",
+							"RetryFailedTestCases": "false"
+						}
+					]
+				}
+			]
+		}
+	}
+]

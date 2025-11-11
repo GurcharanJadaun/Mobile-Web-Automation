@@ -76,20 +76,21 @@
 						<goals>
 							<goal>java</goal>
 						</goals>
-						<configuration>
-							<mainClass>runner.RunTests</mainClass>
-							<classpathScope>test</classpathScope>
-							<arguments>
-								<argument>
-									--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</argument>
-								<argument>
-									--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</argument>
-								<argument>-DtestEnv=${testEnv}</argument>
-								<argument>-DdeviceConfig=${deviceConfig}</argument>
-								<argument>-DtestCaseTags=${testCaseTags}</argument>
-								<argument>-DtestPlanTags=${testPlanTags}</argument>
-							</arguments>
-						</configuration>
+                        <configuration>
+                            <mainClass>runner.RunTests</mainClass>
+                            <classpathScope>test</classpathScope>
+                            <arguments>
+                                <argument>
+                                    --add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</argument>
+                                <argument>
+                                    --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</argument>
+                                <argument>-DtestEnv=${testEnv}</argument>
+                                <argument>-DdeviceConfig=${deviceConfig}</argument>
+                                <argument>-DtestCaseTags=${testCaseTags}</argument>
+                                <argument>-DtestPlanTags=${testPlanTags}</argument>
+                                <argument>-DtargetDevice=${targetDevice}</argument>
+                            </arguments>
+                        </configuration>
 					</execution>
 				</executions>
 			</plugin>

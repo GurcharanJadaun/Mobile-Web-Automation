@@ -5,29 +5,30 @@ import org.openqa.selenium.By;
 
 import TestExceptions.SoftAssert;
 import deviceConfiguration.AppConfig;
+import deviceConfiguration.DeviceConfig;
 import utilities.LocatorInfo;
 
 public class MobileKeywordDictionary {
 	private MobileDriver driver;
-	private AppConfig appConfig;
+	private DeviceConfig deviceConfig;
 	private JSONObject testUrlDetails;
 
-	public MobileKeywordDictionary(AppConfig appConfig) {
-		this.appConfig = appConfig;
-		String url = appConfig.getAppiumServerUrl();
-		String platformName = appConfig.getTargetPlatform();
-		testUrlDetails = appConfig.getTestUrlDetails();
+	public MobileKeywordDictionary(DeviceConfig deviceConfig) {
+		this.deviceConfig = deviceConfig;
+		String url = deviceConfig.getAppiumServerUrl();
+		String platformName = deviceConfig.getTargetPlatform();
+		testUrlDetails = deviceConfig.getTestUrlDetails();
 		if(platformName.equalsIgnoreCase("Android")) {
 		driver = new AndroidMobileDriver(url);}
 		else {
-			
+			driver = new IosMobileDriver(url);
 		}
 	}
 
 	public void openBrowser(String param) {
 
 		if (param.equalsIgnoreCase("deviceConfig.browser")) {
-			param = appConfig.getAppName();
+			param = deviceConfig.getAppList().getFirst().getAppName();
 		}
 		System.out.println("Working with package : "+param);
 		driver.openBrowser(param);
@@ -229,8 +230,19 @@ public class MobileKeywordDictionary {
 		return driver.takeScreenshot();
 	}
 	
-	public void closeApp() {
-		driver.closeApp(appConfig.getPackageName());
+	public void closeApp(String appName) throws Exception {
+		String packageName = "";
+		for (AppConfig app : deviceConfig.getAppList()) {
+			if (app.getAppName().equalsIgnoreCase(appName)) {
+				packageName = app.getPackageName();
+			}
+		}
+		if (packageName.length() > 0) {
+			driver.closeApp(packageName);
+		} else {
+			throw new Exception("<< No Such App Name exists in configuration >>");
+		}
+
 	}
 
 	

@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import TestReports.ReportTestEventManager;
 import TestReports.ReportTestListener;
 import deviceConfiguration.AppConfig;
+import deviceConfiguration.DeviceConfig;
 import deviceConfiguration.DeviceManager;
 import loader.TestSuiteLoader;
 import testEnvironmentConfig.TestEnvironmentConfig;
@@ -21,93 +22,81 @@ import utilities.ExecuteStep;
 
 public class RunMobileTests {
 	ReportTestEventManager[] report;
-	
-	public static void main(String args[]) {
-		Instant start = Instant.now();
-		TestSuiteLoader loadTests= new TestSuiteLoader();
-		String urlConfig = System.getProperty("testEnv","Product");
-		String deviceConfig = System.getProperty("deviceConfig","AndroidEdgeRunner");
-		String testCaseTags = System.getProperty("testCaseTags","@Regression");
-		String testPlanTags = System.getProperty("testPlanTags","@Debug");
-		
-			
+
+	public void run() {
+		TestSuiteLoader loadTests = new TestSuiteLoader();
+		String urlConfig = System.getProperty("testEnv", "Product");
+		String deviceConfig = System.getProperty("deviceConfig", "AndroidEdgeRunner");
+		String testCaseTags = System.getProperty("testCaseTags", "@Regression");
+		String testPlanTags = System.getProperty("testPlanTags", "@Debug");
+
 		loadTests.setupTest(testPlanTags);
-		
-		TestEnvironmentConfig testEnvConfig= new TestEnvironmentConfig("TestURLConfig");
-		JSONObject urlDetails= testEnvConfig.getTestEnvConfigFromJson(urlConfig);
-		DeviceManager device = new DeviceManager("DeviceConfig");
-		
-		device.setupAppsForDevice(deviceConfig,urlDetails);
 
-		RunMobileTests runner = new RunMobileTests();
-		List<TestSuite> listOfTestSuites= loadTests.getListOfTestSuite(testCaseTags);
-		
-		runner.testAppsSequentially(device, listOfTestSuites);	
-			
-		Instant end = Instant.now();
-		Duration timeElapsed = Duration.between(start, end);
+		TestEnvironmentConfig testEnvConfig = new TestEnvironmentConfig("TestURLConfig");
+		JSONObject urlDetails = testEnvConfig.getTestEnvConfigFromJson(urlConfig);
+		DeviceManager device = new DeviceManager("MobileDeviceConfig");
 
-	long seconds = timeElapsed.toSeconds();
-		double minutes = timeElapsed.toMinutes();
-		System.out.println("Time taken: " + seconds + " seconds (" + minutes + " minutes)");
-	
-		System.exit(0);
+		device.setupMobileDevices(deviceConfig, urlDetails);
+
+		List<TestSuite> listOfTestSuites = loadTests.getListOfTestSuite(testCaseTags);
+
+		this.testDevicesSequentially(device, listOfTestSuites);
+
 	}
-	
-	public void testAppsSequentially(DeviceManager device, List<TestSuite> testSuites) {
-		report = new ReportTestEventManager[device.getAppList().size()];
-		
-		device.getAppList().forEach(app -> {
-			report[app.getAppSerialNumber()] = new ReportTestEventManager();
-			report[app.getAppSerialNumber()].addTestListener(new ReportTestListener()); // creates fresh report for each browser
-			this.testSuiteSequential(testSuites, app);
-			Optional<String> suffix = Optional.ofNullable(app.getAppName()+" ");
-			report[app.getAppSerialNumber()].fireFinishTest(suffix);
+
+	public void testDevicesSequentially(DeviceManager deviceManger, List<TestSuite> testSuites) {
+		report = new ReportTestEventManager[deviceManger.getDeviceList().size()];
+
+		deviceManger.getDeviceList().forEach(device -> {
+			report[device.getDeviceNumber()] = new ReportTestEventManager();
+			report[device.getDeviceNumber()].addTestListener(new ReportTestListener()); // creates fresh report for each
+																						// browser
+			this.testSuiteSequential(testSuites, device);
+			Optional<String> suffix = Optional.ofNullable(device.getAppList().getFirst().getAppName() + " ");
+			report[device.getDeviceNumber()].fireFinishTest(suffix);
 		});
-	
 
 	}
-	
-	public void testSuiteSequential(List<TestSuite> testSuites, AppConfig app) {
-		for(TestSuite testSuite : testSuites) {
-	
-		TestSuite suite = (new TestSuite(testSuite));
-		report[app.getAppSerialNumber()].fireCreateTestSuite(suite);
-		
-		this.runTestSuite(suite, app);	
+
+	public void testSuiteSequential(List<TestSuite> testSuites, DeviceConfig deviceConfig) {
+		for (TestSuite testSuite : testSuites) {
+
+			TestSuite suite = (new TestSuite(testSuite));
+			report[deviceConfig.getDeviceNumber()].fireCreateTestSuite(suite);
+
+			this.runTestSuite(suite, deviceConfig);
 		}
 	}
-	
-	private void runTestSuite(TestSuite testSuite, AppConfig appConfig) {
-				
-			for (TestCase testCase : testSuite.getTestCases()) {
-			
-				ExecuteStep ex = new ExecuteStep(appConfig);
-				report[appConfig.getAppSerialNumber()].fireAddTestCaseEvent(testCase, testSuite);
-				
-				this.runTestCase(testCase, ex);
-					
-				if(testCase.getTestCaseResult().isFailed() && appConfig.retryFailedTestCase()) {
-					System.out.println("<< Retrying failed test case >>");
-					this.cleanUp(ex);
-					TestCase retryTestCase = new TestCase(testCase); 
-					String testName = testCase.getTestCaseId();
-					
-					retryTestCase.insertTestCaseId("Retry > "+testName);
-					report[appConfig.getAppSerialNumber()].fireAddTestCaseEvent(retryTestCase, testSuite);
-					
-					ex = new ExecuteStep(appConfig);
-					this.runTestCase(retryTestCase, ex);
-				}
-			
+
+	private void runTestSuite(TestSuite testSuite, DeviceConfig deviceConfig) {
+
+		for (TestCase testCase : testSuite.getTestCases()) {
+
+			ExecuteStep ex = new ExecuteStep(deviceConfig);
+			report[deviceConfig.getDeviceNumber()].fireAddTestCaseEvent(testCase, testSuite);
+
+			this.runTestCase(testCase, ex);
+
+			if (testCase.getTestCaseResult().isFailed() && deviceConfig.retryFailedTestCase()) {
+				System.out.println("<< Retrying failed test case >>");
 				this.cleanUp(ex);
-				}
+				TestCase retryTestCase = new TestCase(testCase);
+				String testName = testCase.getTestCaseId();
+
+				retryTestCase.insertTestCaseId("Retry > " + testName);
+				report[deviceConfig.getDeviceNumber()].fireAddTestCaseEvent(retryTestCase, testSuite);
+
+				ex = new ExecuteStep(deviceConfig);
+				this.runTestCase(retryTestCase, ex);
+			}
+
+			this.cleanUp(ex);
+		}
 	}
-	
+
 	private void cleanUp(ExecuteStep ex) {
 		ex.executeStep("closeSession");
 	}
-
 
 	private void runTestCase(TestCase testCase, ExecuteStep ex) {
 		Instant start = Instant.now();
@@ -115,10 +104,10 @@ public class RunMobileTests {
 		Iterator<TestStep> it = testCase.getSteps().iterator();
 		while (it.hasNext()) {
 			TestStep ts = it.next();
-			report[ex.getAppConfig().getAppSerialNumber()].fireAddTestStepEvent(ts, testCase);
+			report[ex.getDeviceConfig().getDeviceNumber()].fireAddTestStepEvent(ts, testCase);
 			if (testCase.getTestCaseResult().isFailed()) {
 				ts.setFailureReason(">> Skipped because of error in " + testCase.getTestCaseId() + " <<");
-				this.skipStep(ts, ex.getAppConfig());
+				this.skipStep(ts, ex.getDeviceConfig());
 			} else {
 				runTestStep(ts, ex);
 
@@ -134,22 +123,22 @@ public class RunMobileTests {
 		Instant end = Instant.now();
 		Duration timeElapsed = Duration.between(start, end);
 
-		System.out.println("Executing : " +ex.getAppConfig().getAppName()+"\t"+ testCase.getTestCaseId() + "\t" + testCase.getTestCaseResult() + "\t"
-				+ timeElapsed.toSeconds() + "\t" + testCase.getTestCaseReason());
+		System.out.println("Executing : " + ex.getDeviceConfig().getAppList().getFirst().getAppName() + "\t"
+				+ testCase.getTestCaseId() + "\t" + testCase.getTestCaseResult() + "\t" + timeElapsed.toSeconds() + "\t"
+				+ testCase.getTestCaseReason());
 	}
 
-	
 	@SuppressWarnings("unused")
-	private void skipTestCase(TestCase testCase, AppConfig browserConfig, String reason) {
+	private void skipTestCase(TestCase testCase, DeviceConfig deviceConfig, String reason) {
 		testCase.getSteps().forEach(step -> {
 			step.setResult(TestStatus.PENDING, reason);
-			this.skipStep(step, browserConfig);
+			this.skipStep(step, deviceConfig);
 		});
 
 	}
-	
-	private void skipStep(TestStep testStep ,AppConfig appConfig) {
-		report[appConfig.getAppSerialNumber()].fireSetTestStepStatus(testStep);
+
+	private void skipStep(TestStep testStep, DeviceConfig deviceConfig) {
+		report[deviceConfig.getDeviceNumber()].fireSetTestStepStatus(testStep);
 	}
 
 	private void runTestStep(TestStep testStep, ExecuteStep ex) {
@@ -175,13 +164,14 @@ public class RunMobileTests {
 				ex.result = TestStatus.INVALID;
 				ex.reason = "Something missed by compiler\n<<-Didn't find a proper match->>\n";
 			}
-			condition = (ex.result != TestStatus.INVALID) && ex.result.isFailed() && (System.currentTimeMillis() - start) < 500;
+			condition = (ex.result != TestStatus.INVALID) && ex.result.isFailed()
+					&& (System.currentTimeMillis() - start) < 500;
 			if (condition) {
 				try {
-						ex.flush();
-						Thread.sleep(500);
-						System.out.println("Retyring Step : "+ testStep.getStepDescription());
-						
+					ex.flush();
+					Thread.sleep(500);
+					System.out.println("Retyring Step : " + testStep.getStepDescription());
+
 				} catch (Exception exception) {
 
 				}
@@ -192,7 +182,7 @@ public class RunMobileTests {
 		testStep.setResult(ex.result, ex.reason);
 		testStep.attachScreenshot(ex.screenshot);
 
-		report[ex.getAppConfig().getAppSerialNumber()].fireSetTestStepStatus(testStep);
+		report[ex.getDeviceConfig().getDeviceNumber()].fireSetTestStepStatus(testStep);
 	}
-	
+
 }
