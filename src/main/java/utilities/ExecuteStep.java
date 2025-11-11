@@ -9,6 +9,7 @@ import automationUtilities.webAutomation.KeywordDictionary;
 import automationUtilities.mobileAutomation.MobileKeywordDictionary;
 import deviceConfiguration.AppConfig;
 import deviceConfiguration.BrowserConfig;
+import deviceConfiguration.DeviceConfig;
 import testManager.TestStatus;
 
 public class ExecuteStep {
@@ -19,7 +20,7 @@ public class ExecuteStep {
 	private MediaEntityBuilder screenshotBuilder;
 	public Media screenshot;
 	BrowserConfig browserConfig;
-	AppConfig appConfig;
+	DeviceConfig deviceConfig;
 
 	public ExecuteStep(BrowserConfig browserConfig) {
 		this.browserConfig = browserConfig;
@@ -29,9 +30,9 @@ public class ExecuteStep {
 		this.flush();
 	}
 	
-	public ExecuteStep(AppConfig appConfig) {
-		this.appConfig = appConfig;
-		MobileKeywordDictionary dictionary = new MobileKeywordDictionary(appConfig);
+	public ExecuteStep(DeviceConfig deviceConfig) {
+		this.deviceConfig = deviceConfig;
+		MobileKeywordDictionary dictionary = new MobileKeywordDictionary(deviceConfig);
 		keywordDictionaryClass = dictionary.getClass();
 		keywordSet = new KeywordSet(dictionary);
 		this.flush();
@@ -124,8 +125,8 @@ public class ExecuteStep {
 		return this.browserConfig;
 	}
 	
-	public AppConfig getAppConfig() {
-		return this.appConfig;
+	public DeviceConfig getDeviceConfig() {
+		return this.deviceConfig;
 		}
 
 	@SuppressWarnings("static-access")
